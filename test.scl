@@ -4,22 +4,22 @@
 // ============================================================
 
 // Variable Declarations
-  VAR
-    myBool : BOOL;
-    myInt : INT;
-    myDInt : DINT;
-    myReal : REAL;
-    myString : STRING;
-    myWord : WORD;
-    myCounter : UDINT;
-    myTimer : TIME;
-  END_VAR
+VAR
+  myBool : BOOL;
+  myInt : INT;
+  myDInt : DINT;
+  myReal : REAL;
+  myString : STRING;
+  myWord : WORD;
+  myCounter : UDINT;
+  myTimer : TIME;
+END_VAR
 
-  VAR_TEMP
-    tempA : INT;
-    tempB : REAL;
-    tempResult : BOOL;
-  END_VAR
+VAR_TEMP
+  tempA : INT;
+  tempB : REAL;
+  tempResult : BOOL;
+END_VAR
 
 REGION Basic Assignments
   // Simple assignments

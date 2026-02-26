@@ -13,6 +13,8 @@
   (db_identifier)
 ] @leaf
 
+(comment) @append_hardline
+
 ; -----------------------------------------------------------------------------
 ; Allow blank lines before statements
 ; -----------------------------------------------------------------------------
@@ -95,63 +97,63 @@
 (var_block (var_declaration) @prepend_hardline)
 
 ; -----------------------------------------------------------------------------
-; Keywords — spacing and newlines
+; Keywords — spacing and newlines (uppercase and lowercase)
 ; -----------------------------------------------------------------------------
 
 ; Block closers on their own line
-"END_IF"     @prepend_hardline
-"END_FOR"    @prepend_hardline
-"END_WHILE"  @prepend_hardline
-"END_CASE"   @prepend_hardline
-"END_REGION" @prepend_hardline
-"END_VAR"    @prepend_hardline
+["END_IF"     "end_if"]     @prepend_hardline
+["END_FOR"    "end_for"]    @prepend_hardline
+["END_WHILE"  "end_while"]  @prepend_hardline
+["END_CASE"   "end_case"]   @prepend_hardline
+["END_REGION" "end_region"] @prepend_hardline
+["END_VAR"    "end_var"]    @prepend_hardline
 
 ; ELSIF and ELSE on their own line
-"ELSIF" @prepend_hardline @append_space
-"ELSE"  @prepend_hardline @append_indent_start @append_hardline
+["ELSIF" "elsif"] @prepend_hardline @append_space
+["ELSE"  "else"]  @prepend_hardline @append_indent_start @append_hardline
 
 ; Space after these keywords before condition/expression
-"IF"    @append_space
-"FOR"   @append_space
-"WHILE" @append_space
-"CASE"  @append_space
+["IF"    "if"]    @append_space
+["FOR"   "for"]   @append_space
+["WHILE" "while"] @append_space
+["CASE"  "case"]  @append_space
 
 ; Space before and after these keywords
-"THEN" @prepend_space @append_hardline
-"DO"   @prepend_space @append_hardline
-"OF"   @prepend_space
-"TO"   @prepend_space @append_space
-"BY"   @prepend_space @append_space
+["THEN" "then"] @prepend_space @append_hardline
+["DO"   "do"]   @prepend_space @append_hardline
+["OF"   "of"]   @prepend_space
+["TO"   "to"]   @prepend_space @append_space
+["BY"   "by"]   @prepend_space @append_space
 
 ; -----------------------------------------------------------------------------
 ; Indentation
 ; -----------------------------------------------------------------------------
 
 (if_statement
-  "THEN" @append_indent_start
-  "END_IF" @prepend_indent_end)
+  ["THEN" "then"] @append_indent_start
+  ["END_IF" "end_if"] @prepend_indent_end)
 
 (if_statement
-  "ELSE" @prepend_indent_end)
+  ["ELSE" "else"] @prepend_indent_end)
 
 (elsif_clause
-  "ELSIF" @prepend_indent_end
-  "THEN" @append_indent_start)
+  ["ELSIF" "elsif"] @prepend_indent_end
+  ["THEN" "then"] @append_indent_start)
 
 (for_loop
-  "DO" @append_indent_start
-  "END_FOR" @prepend_indent_end)
+  ["DO" "do"] @append_indent_start
+  ["END_FOR" "end_for"] @prepend_indent_end)
 
 (while_loop
-  "DO" @append_indent_start
-  "END_WHILE" @prepend_indent_end)
+  ["DO" "do"] @append_indent_start
+  ["END_WHILE" "end_while"] @prepend_indent_end)
 
 (case_statement
-  "OF" @append_indent_start
-  "END_CASE" @prepend_indent_end)
+  ["OF" "of"] @append_indent_start
+  ["END_CASE" "end_case"] @prepend_indent_end)
 
 (case_statement
-  "ELSE" @prepend_indent_end)
+  ["ELSE" "else"] @prepend_indent_end)
 
 (case_branch
   ":" @append_indent_start)
@@ -159,18 +161,18 @@
 (case_branch (case_value) @prepend_hardline @prepend_indent_end)
 
 (var_block
-  "END_VAR" @prepend_indent_end)
+  ["END_VAR" "end_var"] @prepend_indent_end)
 
 (var_block
-  ["VAR"
-  "VAR_TEMP"
-  "VAR_IN"
-  "VAR_OUT"
-  "VAR_IN_OUT"] @append_indent_start)
+  ["VAR" "var"
+   "VAR_TEMP" "var_temp"
+   "VAR_IN" "var_in"
+   "VAR_OUT" "var_out"
+   "VAR_IN_OUT" "var_in_out"] @append_indent_start)
 
 (region
-  "REGION" @append_indent_start
-  "END_REGION" @prepend_indent_end)
+  ["REGION" "region"] @append_indent_start
+  ["END_REGION" "end_region"] @prepend_indent_end)
 
 (region
   (region_name) @append_hardline)
@@ -184,17 +186,18 @@
 
 (assignment ":=" @prepend_space @append_space)
 (argument ":=" @prepend_space @append_space)
+(argument "=>" @prepend_space @append_space)
 
 ";" @prepend_antispace
 
 (binary_expression
   [
-    "OR" "XOR" "AND"
+    "OR" "or" "XOR" "xor" "AND" "and"
     "=" "<>" "<" ">" "<=" ">="
-    "+" "-" "*" "/" "MOD"
+    "+" "-" "*" "/" "MOD" "mod"
   ] @prepend_space @append_space)
 
-(unary_expression "NOT" @append_space)
+(unary_expression ["NOT" "not"] @append_space)
 
 ; -----------------------------------------------------------------------------
 ; Function calls
@@ -220,6 +223,7 @@
 (local_variable "." @prepend_antispace @append_antispace)
 (global_variable "." @prepend_antispace @append_antispace)
 (local_variable "#" @append_antispace)
+(global_variable "#" @append_antispace)
 
 ; -----------------------------------------------------------------------------
 ; Case branch — no space before colon
