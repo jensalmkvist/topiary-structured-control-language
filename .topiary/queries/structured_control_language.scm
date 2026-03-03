@@ -33,6 +33,7 @@
   (function_declaration)
   (organization_block_declaration)
   (data_block_declaration)
+  (type_declaration)
 ] @allow_blank_line_before
 
 [
@@ -59,6 +60,35 @@
 (source_file (function_declaration)           @prepend_hardline)
 (source_file (organization_block_declaration) @prepend_hardline)
 (source_file (data_block_declaration)         @prepend_hardline)
+(source_file (type_declaration)               @prepend_hardline)
+
+; TYPE / END_TYPE keywords — own line, space after TYPE before name
+["TYPE" "type" "Type"] @prepend_hardline @append_space
+["END_TYPE" "end_type" "End_type" "End_Type"] @prepend_hardline @append_hardline
+
+; STRUCT / END_STRUCT — END_STRUCT always on its own line
+; STRUCT does NOT get @prepend_hardline globally because it appears inline
+; after ":" in var_declarations (e.g. "Header : Struct").
+; Newlines before top-level STRUCT are handled by (struct_type (var_declaration))
+; and the type_declaration indent scope.
+["STRUCT" "struct" "Struct"] @append_hardline
+["END_STRUCT" "end_struct" "End_struct" "End_Struct"] @prepend_hardline
+
+; In a type_declaration: STRUCT and END_STRUCT are indented under TYPE.
+; VERSION is NOT indented. Indent opens after the version_pragma line,
+; or after the block name if there is no VERSION pragma.
+(type_declaration
+  (version_pragma) @append_indent_start
+  ["END_TYPE" "end_type" "End_type" "End_Type"] @prepend_indent_end)
+(type_declaration
+  name: (identifier)    @append_indent_start
+  (version_pragma)      @prepend_indent_end)
+(type_declaration
+  name: (db_identifier) @append_indent_start
+  (version_pragma)      @prepend_indent_end)
+
+; var_declaration inside struct_type — each on its own line
+(struct_type (var_declaration) @prepend_hardline)
 
 ; -----------------------------------------------------------------------------
 ; Statements inside all container scopes — each on its own line
@@ -165,9 +195,10 @@
 ; (uppercase and lowercase variants)
 ; -----------------------------------------------------------------------------
 
-; VERSION pragma  — own line, space around colon
+; VERSION pragma  — own line, space around colon, hardline after value
 (version_pragma) @prepend_hardline
 (version_pragma ":" @prepend_space @append_space)
+(version_pragma (float_literal) @append_hardline)
 
 ; Block-level RETAIN / NON_RETAIN — own line
 (block_attr) @prepend_hardline @append_hardline
@@ -329,7 +360,7 @@
 (case_element ":" @append_indent_start @append_hardline)
 (case_element) @append_indent_end
 
-; STRUCT
+; STRUCT indentation
 (struct_type
   ["STRUCT" "struct" "Struct"] @append_indent_start
   ["END_STRUCT" "end_struct" "End_struct" "End_Struct"] @prepend_indent_end)
