@@ -3,230 +3,410 @@
 ; =============================================================================
 
 ; -----------------------------------------------------------------------------
-; Leaves — do not format inside these nodes
+; Leaves — do not reformat the internals of these nodes
 ; -----------------------------------------------------------------------------
 
 [
-  (string)
+  (string_literal)
+  (wstring_literal)
   (comment)
   (region_name)
   (db_identifier)
+  (typed_literal)
+  (time_literal)
+  (s5time_literal)
+  (date_literal)
+  (time_of_day_literal)
+  (date_time_literal)
+  (based_literal)
 ] @leaf
 
+; Comments always followed by a newline
 (comment) @append_hardline
 
 ; -----------------------------------------------------------------------------
-; Allow blank lines before statements
+; Allow blank lines before top-level declarations and statements
 ; -----------------------------------------------------------------------------
 
 [
-  (assignment)
-  (function_call)
+  (function_block_declaration)
+  (function_declaration)
+  (organization_block_declaration)
+  (data_block_declaration)
+] @allow_blank_line_before
+
+[
+  (assignment_statement)
+  (invocation_statement)
   (if_statement)
-  (for_loop)
-  (while_loop)
+  (for_statement)
+  (while_statement)
+  (repeat_statement)
   (case_statement)
   (var_block)
   (region)
   (comment)
+  (return_statement)
+  (exit_statement)
+  (continue_statement)
 ] @allow_blank_line_before
 
 ; -----------------------------------------------------------------------------
-; Newlines — each statement on its own line
+; Top-level block declarations — each on its own line
 ; -----------------------------------------------------------------------------
 
-(source_file (assignment) @prepend_hardline)
-(source_file (function_call) @prepend_hardline)
-(source_file (if_statement) @prepend_hardline)
-(source_file (for_loop) @prepend_hardline)
-(source_file (while_loop) @prepend_hardline)
-(source_file (case_statement) @prepend_hardline)
-(source_file (var_block) @prepend_hardline)
-(source_file (region) @prepend_hardline)
-(source_file (comment) @prepend_hardline)
+(source_file (function_block_declaration)     @prepend_hardline)
+(source_file (function_declaration)           @prepend_hardline)
+(source_file (organization_block_declaration) @prepend_hardline)
+(source_file (data_block_declaration)         @prepend_hardline)
 
-(if_statement (assignment) @prepend_hardline)
-(if_statement (function_call) @prepend_hardline)
-(if_statement (if_statement) @prepend_hardline)
-(if_statement (for_loop) @prepend_hardline)
-(if_statement (while_loop) @prepend_hardline)
-(if_statement (case_statement) @prepend_hardline)
-(if_statement (comment) @prepend_hardline)
+; -----------------------------------------------------------------------------
+; Statements inside all container scopes — each on its own line
+; -----------------------------------------------------------------------------
 
-(elsif_clause (assignment) @prepend_hardline)
-(elsif_clause (function_call) @prepend_hardline)
-(elsif_clause (if_statement) @prepend_hardline)
-(elsif_clause (for_loop) @prepend_hardline)
-(elsif_clause (while_loop) @prepend_hardline)
-(elsif_clause (case_statement) @prepend_hardline)
-(elsif_clause (comment) @prepend_hardline)
+; Helper macro — applied to every parent that can contain statements
+; We list each combination to satisfy Topiary's explicit matching requirement.
 
-(for_loop (assignment) @prepend_hardline)
-(for_loop (function_call) @prepend_hardline)
-(for_loop (if_statement) @prepend_hardline)
-(for_loop (for_loop) @prepend_hardline)
-(for_loop (while_loop) @prepend_hardline)
-(for_loop (case_statement) @prepend_hardline)
-(for_loop (comment) @prepend_hardline)
+; function_block_declaration body
+(function_block_declaration (assignment_statement)  @prepend_hardline)
+(function_block_declaration (invocation_statement)  @prepend_hardline)
+(function_block_declaration (if_statement)          @prepend_hardline)
+(function_block_declaration (for_statement)         @prepend_hardline)
+(function_block_declaration (while_statement)       @prepend_hardline)
+(function_block_declaration (repeat_statement)      @prepend_hardline)
+(function_block_declaration (case_statement)        @prepend_hardline)
+(function_block_declaration (return_statement)      @prepend_hardline)
+(function_block_declaration (exit_statement)        @prepend_hardline)
+(function_block_declaration (continue_statement)    @prepend_hardline)
+(function_block_declaration (region)                @prepend_hardline)
+(function_block_declaration (comment)               @prepend_hardline)
 
-(while_loop (assignment) @prepend_hardline)
-(while_loop (function_call) @prepend_hardline)
-(while_loop (if_statement) @prepend_hardline)
-(while_loop (for_loop) @prepend_hardline)
-(while_loop (while_loop) @prepend_hardline)
-(while_loop (case_statement) @prepend_hardline)
-(while_loop (comment) @prepend_hardline)
+; function_declaration body
+(function_declaration (assignment_statement)  @prepend_hardline)
+(function_declaration (invocation_statement)  @prepend_hardline)
+(function_declaration (if_statement)          @prepend_hardline)
+(function_declaration (for_statement)         @prepend_hardline)
+(function_declaration (while_statement)       @prepend_hardline)
+(function_declaration (repeat_statement)      @prepend_hardline)
+(function_declaration (case_statement)        @prepend_hardline)
+(function_declaration (return_statement)      @prepend_hardline)
+(function_declaration (exit_statement)        @prepend_hardline)
+(function_declaration (continue_statement)    @prepend_hardline)
+(function_declaration (region)                @prepend_hardline)
+(function_declaration (comment)               @prepend_hardline)
 
-(case_branch (assignment) @prepend_hardline)
-(case_branch (function_call) @prepend_hardline)
-(case_branch (if_statement) @prepend_hardline)
-(case_branch (for_loop) @prepend_hardline)
-(case_branch (while_loop) @prepend_hardline)
-(case_branch (case_statement) @prepend_hardline)
-(case_branch (comment) @prepend_hardline)
+; organization_block_declaration body
+(organization_block_declaration (assignment_statement)  @prepend_hardline)
+(organization_block_declaration (invocation_statement)  @prepend_hardline)
+(organization_block_declaration (if_statement)          @prepend_hardline)
+(organization_block_declaration (for_statement)         @prepend_hardline)
+(organization_block_declaration (while_statement)       @prepend_hardline)
+(organization_block_declaration (repeat_statement)      @prepend_hardline)
+(organization_block_declaration (case_statement)        @prepend_hardline)
+(organization_block_declaration (return_statement)      @prepend_hardline)
+(organization_block_declaration (exit_statement)        @prepend_hardline)
+(organization_block_declaration (continue_statement)    @prepend_hardline)
+(organization_block_declaration (region)                @prepend_hardline)
+(organization_block_declaration (comment)               @prepend_hardline)
 
-(region (assignment) @prepend_hardline)
-(region (function_call) @prepend_hardline)
-(region (if_statement) @prepend_hardline)
-(region (for_loop) @prepend_hardline)
-(region (while_loop) @prepend_hardline)
-(region (case_statement) @prepend_hardline)
-(region (var_block) @prepend_hardline)
-(region (comment) @prepend_hardline)
+; statement_list (shared by if/for/while/repeat bodies via else_clause etc.)
+(statement_list (assignment_statement)  @prepend_hardline)
+(statement_list (invocation_statement)  @prepend_hardline)
+(statement_list (if_statement)          @prepend_hardline)
+(statement_list (for_statement)         @prepend_hardline)
+(statement_list (while_statement)       @prepend_hardline)
+(statement_list (repeat_statement)      @prepend_hardline)
+(statement_list (case_statement)        @prepend_hardline)
+(statement_list (return_statement)      @prepend_hardline)
+(statement_list (exit_statement)        @prepend_hardline)
+(statement_list (continue_statement)    @prepend_hardline)
+(statement_list (region)                @prepend_hardline)
+(statement_list (comment)               @prepend_hardline)
+
+; case_element body
+(case_element (assignment_statement)  @prepend_hardline)
+(case_element (invocation_statement)  @prepend_hardline)
+(case_element (if_statement)          @prepend_hardline)
+(case_element (for_statement)         @prepend_hardline)
+(case_element (while_statement)       @prepend_hardline)
+(case_element (repeat_statement)      @prepend_hardline)
+(case_element (case_statement)        @prepend_hardline)
+(case_element (return_statement)      @prepend_hardline)
+(case_element (exit_statement)        @prepend_hardline)
+(case_element (continue_statement)    @prepend_hardline)
+(case_element (region)                @prepend_hardline)
+(case_element (comment)               @prepend_hardline)
+
+; data_block_declaration body (BEGIN section assignments)
+(data_block_declaration (assignment_statement) @prepend_hardline)
+(data_block_declaration (comment)              @prepend_hardline)
+
+; region body
+(region (assignment_statement)  @prepend_hardline)
+(region (invocation_statement)  @prepend_hardline)
+(region (if_statement)          @prepend_hardline)
+(region (for_statement)         @prepend_hardline)
+(region (while_statement)       @prepend_hardline)
+(region (repeat_statement)      @prepend_hardline)
+(region (case_statement)        @prepend_hardline)
+(region (return_statement)      @prepend_hardline)
+(region (exit_statement)        @prepend_hardline)
+(region (continue_statement)    @prepend_hardline)
+(region (comment)               @prepend_hardline)
+
+; -----------------------------------------------------------------------------
+; Variable blocks — each declaration on its own line
+; -----------------------------------------------------------------------------
 
 (var_block (var_declaration) @prepend_hardline)
 
 ; -----------------------------------------------------------------------------
-; Keywords — spacing and newlines (uppercase and lowercase)
+; Block-level keywords and their spacing/newlines
+; (uppercase and lowercase variants)
 ; -----------------------------------------------------------------------------
 
-; Block closers on their own line
-["END_IF"     "end_if"]     @prepend_hardline
-["END_FOR"    "end_for"]    @prepend_hardline
-["END_WHILE"  "end_while"]  @prepend_hardline
-["END_CASE"   "end_case"]   @prepend_hardline
-["END_REGION" "end_region"] @prepend_hardline
-["END_VAR"    "end_var"]    @prepend_hardline
+; VERSION pragma  — own line, space around colon
+(version_pragma) @prepend_hardline
+(version_pragma ":" @prepend_space @append_space)
 
-; ELSIF and ELSE on their own line
-["ELSIF" "elsif"] @prepend_hardline @append_space
-["ELSE"  "else"]  @prepend_hardline @append_indent_start @append_hardline
+; Block-level RETAIN / NON_RETAIN — own line
+(block_attr) @prepend_hardline @append_hardline
 
-; Space after these keywords before condition/expression
-["IF"    "if"]    @append_space
-["FOR"   "for"]   @append_space
-["WHILE" "while"] @append_space
-["CASE"  "case"]  @append_space
+; BEGIN section — own line
+["BEGIN" "begin" "Begin"] @prepend_hardline @append_hardline
 
-; Space before and after these keywords
-["THEN" "then"] @prepend_space @append_hardline
-["DO"   "do"]   @prepend_space @append_hardline
-["OF"   "of"]   @prepend_space
-["TO"   "to"]   @prepend_space @append_space
-["BY"   "by"]   @prepend_space @append_space
+; Block openers — on their own line, name follows on same line
+["FUNCTION_BLOCK" "function_block" "Function_block" "Function_Block"] @prepend_hardline @append_space
+["FUNCTION" "function" "Function"]                                    @prepend_hardline @append_space
+["ORGANIZATION_BLOCK" "organization_block" "Organization_block" "Organization_Block"] @prepend_hardline @append_space
+["DATA_BLOCK" "data_block" "Data_block" "Data_Block"]                  @prepend_hardline @append_space
+
+; Block closers — on their own line
+["END_FUNCTION_BLOCK" "end_function_block" "End_function_block" "End_Function_Block"] @prepend_hardline @append_hardline
+["END_FUNCTION" "end_function" "End_function" "End_Function"]             @prepend_hardline @append_hardline
+["END_ORGANIZATION_BLOCK" "end_organization_block" "End_organization_block" "End_Organization_Block"] @prepend_hardline @append_hardline
+["END_DATA_BLOCK" "end_data_block" "End_data_block" "End_Data_Block"]     @prepend_hardline @append_hardline
+
+; VAR block keywords
+["VAR" "var" "Var"
+ "VAR_INPUT" "var_input" "Var_input" "Var_Input"
+ "VAR_OUTPUT" "var_output" "Var_output" "Var_Output"
+ "VAR_IN_OUT" "var_in_out" "Var_in_out" "Var_In_Out"
+ "VAR_TEMP" "var_temp" "Var_temp" "Var_Temp"
+ "VAR_STAT" "var_stat" "Var_stat" "Var_Stat"
+ "VAR_GLOBAL" "var_global" "Var_global" "Var_Global"] @prepend_hardline @append_space
+
+["END_VAR" "end_var" "End_var" "End_Var"] @prepend_hardline @append_hardline
+
+; RETAIN / NON_RETAIN / CONSTANT / PERSISTENT stay on same line as VAR keyword.
+; var_declaration gets its own @prepend_hardline from (var_block (var_declaration)).
+(var_attr) @append_hardline
+
+; -----------------------------------------------------------------------------
+; Control-flow keyword spacing
+; -----------------------------------------------------------------------------
+
+; IF / ELSIF — space after, condition follows inline
+["IF" "if" "If"] @append_space
+["ELSIF" "elsif" "Elsif"] @prepend_hardline @append_space
+
+; THEN — space before, body on next line
+["THEN" "then" "Then"] @prepend_space @append_hardline
+
+; ELSE — own line, body on next line
+["ELSE" "else" "Else"] @prepend_hardline @append_hardline
+
+; END_IF — own line
+["END_IF" "end_if" "End_if" "End_If"] @prepend_hardline
+
+; FOR — space after
+["FOR" "for" "For"] @append_space
+
+; TO / BY — space on both sides
+["TO" "to" "To"] @prepend_space @append_space
+["BY" "by" "By"] @prepend_space @append_space
+
+; DO — space before, body on next line
+["DO" "do" "Do"] @prepend_space @append_hardline
+
+["END_FOR" "end_for" "End_for" "End_For"] @prepend_hardline
+["END_WHILE" "end_while" "End_while" "End_While"] @prepend_hardline
+
+; WHILE — space after
+["WHILE" "while" "While"] @append_space
+
+; REPEAT — body on next line; UNTIL — own line, space after
+["REPEAT" "repeat" "Repeat"] @append_hardline
+["UNTIL" "until" "Until"] @prepend_hardline @append_space
+["END_REPEAT" "end_repeat" "End_repeat" "End_Repeat"] @prepend_hardline
+
+; CASE — space after; OF — space before, body on next line
+["CASE" "case" "Case"] @append_space
+(case_statement ["OF" "of" "Of"] @prepend_space @append_hardline)
+
+["END_CASE" "end_case" "End_case" "End_Case"] @prepend_hardline
+
+; RETURN / EXIT / CONTINUE — own line, semicolon immediately after
+["RETURN" "return" "Return"] @prepend_hardline @append_antispace
+["EXIT" "exit" "Exit"] @prepend_hardline @append_antispace
+["CONTINUE" "continue" "Continue"] @prepend_hardline @append_antispace
+
+; REGION
+["REGION" "region" "Region"] @prepend_hardline @append_space
+["END_REGION" "end_region" "End_region" "End_Region"] @prepend_hardline
+
+(region (region_name) @append_hardline)
 
 ; -----------------------------------------------------------------------------
 ; Indentation
 ; -----------------------------------------------------------------------------
 
-(if_statement
-  ["THEN" "then"] @append_indent_start
-  ["END_IF" "end_if"] @prepend_indent_end)
+; Block body indentation — indent starts after BEGIN, ends at block closer.
+; VAR blocks and pragmas sit outside BEGIN so they are NOT indented.
+; Statements inside BEGIN ARE indented.
+(function_block_declaration
+  ["BEGIN" "begin" "Begin"] @append_indent_start
+  ["END_FUNCTION_BLOCK" "end_function_block" "End_function_block" "End_Function_Block"] @prepend_indent_end)
 
+(function_declaration
+  ["BEGIN" "begin" "Begin"] @append_indent_start
+  ["END_FUNCTION" "end_function" "End_function" "End_Function"] @prepend_indent_end)
+
+(organization_block_declaration
+  ["BEGIN" "begin" "Begin"] @append_indent_start
+  ["END_ORGANIZATION_BLOCK" "end_organization_block" "End_organization_block" "End_Organization_Block"] @prepend_indent_end)
+
+(data_block_declaration
+  ["BEGIN" "begin" "Begin"] @append_indent_start
+  ["END_DATA_BLOCK" "end_data_block" "End_data_block" "End_Data_Block"] @prepend_indent_end)
+
+; VAR blocks
+(var_block
+  ["VAR" "var" "Var"
+   "VAR_INPUT" "var_input" "Var_input" "Var_Input"
+   "VAR_OUTPUT" "var_output" "Var_output" "Var_Output"
+   "VAR_IN_OUT" "var_in_out" "Var_in_out" "Var_In_Out"
+   "VAR_TEMP" "var_temp" "Var_temp" "Var_Temp"
+   "VAR_STAT" "var_stat" "Var_stat" "Var_Stat"
+   "VAR_GLOBAL" "var_global" "Var_global" "Var_Global"] @append_indent_start
+  ["END_VAR" "end_var" "End_var" "End_Var"] @prepend_indent_end)
+
+; IF / ELSIF / ELSE
 (if_statement
-  ["ELSE" "else"] @prepend_indent_end)
+  ["THEN" "then" "Then"] @append_indent_start
+  ["END_IF" "end_if" "End_if" "End_If"] @prepend_indent_end)
 
 (elsif_clause
-  ["ELSIF" "elsif"] @prepend_indent_end
-  ["THEN" "then"] @append_indent_start)
+  ["ELSIF" "elsif" "Elsif"] @prepend_indent_end
+  ["THEN" "then" "Then"] @append_indent_start)
 
-(for_loop
-  ["DO" "do"] @append_indent_start
-  ["END_FOR" "end_for"] @prepend_indent_end)
+(else_clause
+  ["ELSE" "else" "Else"] @prepend_indent_end @append_indent_start)
 
-(while_loop
-  ["DO" "do"] @append_indent_start
-  ["END_WHILE" "end_while"] @prepend_indent_end)
+; FOR
+(for_statement
+  ["DO" "do" "Do"] @append_indent_start
+  ["END_FOR" "end_for" "End_for" "End_For"] @prepend_indent_end)
 
+; WHILE
+(while_statement
+  ["DO" "do" "Do"] @append_indent_start
+  ["END_WHILE" "end_while" "End_while" "End_While"] @prepend_indent_end)
+
+; REPEAT .. UNTIL
+(repeat_statement
+  ["REPEAT" "repeat" "Repeat"] @append_indent_start
+  ["UNTIL" "until" "Until"] @prepend_indent_end)
+
+; CASE
 (case_statement
-  ["OF" "of"] @append_indent_start
-  ["END_CASE" "end_case"] @prepend_indent_end)
+  ["OF" "of" "Of"] @append_indent_start
+  ["END_CASE" "end_case" "End_case" "End_Case"] @prepend_indent_end)
 
-(case_statement
-  ["ELSE" "else"] @prepend_indent_end)
+; case_element — selector on its own line, body indented after colon.
+; Indent ends at the close of the case_element node (before the next selector).
+(case_element (case_selector_list) @prepend_hardline)
+(case_element ":" @append_indent_start @append_hardline)
+(case_element) @append_indent_end
 
-(case_branch
-  ":" @append_indent_start)
+; STRUCT
+(struct_type
+  ["STRUCT" "struct" "Struct"] @append_indent_start
+  ["END_STRUCT" "end_struct" "End_struct" "End_Struct"] @prepend_indent_end)
 
-(case_branch (case_value) @prepend_hardline @prepend_indent_end)
+; Array type — keep entirely on one line: ARRAY[lo..hi] OF type
+(array_type "]" @append_space)
+(array_type ["OF" "of" "Of"] @append_space)
 
-(var_block
-  ["END_VAR" "end_var"] @prepend_indent_end)
-
-(var_block
-  ["VAR" "var"
-   "VAR_TEMP" "var_temp"
-   "VAR_IN" "var_in"
-   "VAR_OUT" "var_out"
-   "VAR_IN_OUT" "var_in_out"] @append_indent_start)
-
+; REGION
 (region
-  ["REGION" "region"] @append_indent_start
-  ["END_REGION" "end_region"] @prepend_indent_end)
-
-(region
-  (region_name) @append_hardline)
+  ["REGION" "region" "Region"] @append_indent_start
+  ["END_REGION" "end_region" "End_region" "End_Region"] @prepend_indent_end)
 
 ; -----------------------------------------------------------------------------
 ; Assignment and operator spacing
 ; -----------------------------------------------------------------------------
 
-(var_declaration
-  ":" @prepend_space @append_space)
+(var_declaration ":" @prepend_space @append_space)
+(var_declaration ":=" @prepend_space @append_space)
 
-(assignment ":=" @prepend_space @append_space)
-(argument ":=" @prepend_space @append_space)
-(argument "=>" @prepend_space @append_space)
+(assignment_statement ":=" @prepend_space @append_space)
+(for_statement        ":=" @prepend_space @append_space)
+(argument             ":=" @prepend_space @append_space)
+(argument             "=>" @prepend_space @append_space)
+(attribute_pragma     ":=" @prepend_space @append_space)
 
 ";" @prepend_antispace
 
-(binary_expression
-  [
-    "OR" "or" "XOR" "xor" "AND" "and"
-    "=" "<>" "<" ">" "<=" ">="
-    "+" "-" "*" "/" "MOD" "mod"
-  ] @prepend_space @append_space)
+(binary_expression [
+  "OR" "or" "Or" "XOR" "xor" "Xor" "AND" "and" "And"
+  "=" "<>" "<" ">" "<=" ">="
+  "+" "-" "*" "/" "MOD" "mod" "Mod"
+  "**"
+] @prepend_space @append_space)
 
-(unary_expression ["NOT" "not"] @append_space)
+(unary_expression ["NOT" "not" "Not"] @append_space)
 
 ; -----------------------------------------------------------------------------
-; Function calls
+; Function / block calls
 ; -----------------------------------------------------------------------------
 
-(function_call "(" @prepend_antispace)
+; No space between name and opening paren
+(invocation_statement "(" @prepend_antispace)
+(call_expression      "(" @prepend_antispace)
 
-(argument_list
-  "," @prepend_antispace @append_spaced_softline)
-
-(function_call
+; Soft-wrap argument lists
+(invocation_statement
   "(" @append_indent_start @append_empty_softline
   ")" @prepend_empty_softline @prepend_indent_end)
 
-(argument (plain_identifier) @append_space ":=" @append_space)
+(call_expression
+  "(" @append_indent_start @append_empty_softline
+  ")" @prepend_empty_softline @prepend_indent_end)
 
-(function_call ")" @prepend_antispace .)
+; Commas in argument lists — no space before, soft newline after
+(argument_list "," @prepend_antispace @append_spaced_softline)
 
-; -----------------------------------------------------------------------------
-; Variable member access — no spaces around dots
-; -----------------------------------------------------------------------------
-
-(local_variable "." @prepend_antispace @append_antispace)
-(global_variable "." @prepend_antispace @append_antispace)
-(local_variable "#" @append_antispace)
-(global_variable "#" @append_antispace)
+; No space before closing paren (when it's the last token in the call)
+(invocation_statement ")" @prepend_antispace .)
+(call_expression      ")" @prepend_antispace .)
 
 ; -----------------------------------------------------------------------------
-; Case branch — no space before colon
+; Variable member access — no spaces around dots or sigil
 ; -----------------------------------------------------------------------------
 
-(case_branch ":" @prepend_antispace)
+(lvalue "." @prepend_antispace @append_antispace)
+(lvalue "#" @append_antispace)
+
+; -----------------------------------------------------------------------------
+; Subscript — no space before bracket
+; -----------------------------------------------------------------------------
+
+(subscript "[" @prepend_antispace)
+
+; -----------------------------------------------------------------------------
+; Attribute pragma spacing
+; -----------------------------------------------------------------------------
+
+(attribute_pragma "{" @prepend_hardline @append_space)
+(attribute_pragma "}" @prepend_space)
