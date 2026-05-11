@@ -33,7 +33,8 @@
   (function_declaration)
   (organization_block_declaration)
   (data_block_declaration)
-  (type_declaration)
+  (struct_type_declaration)
+  (nvt_type_declaration)
 ] @allow_blank_line_before
 
 [
@@ -60,7 +61,8 @@
 (source_file (function_declaration)           @prepend_hardline)
 (source_file (organization_block_declaration) @prepend_hardline)
 (source_file (data_block_declaration)         @prepend_hardline)
-(source_file (type_declaration)               @prepend_hardline)
+(source_file (struct_type_declaration)        @prepend_hardline)
+(source_file (nvt_type_declaration)           @prepend_hardline)
 
 ; TYPE / END_TYPE keywords — own line, space after TYPE before name
 ["TYPE" "type" "Type"] @prepend_hardline @append_space
@@ -70,20 +72,31 @@
 ; STRUCT does NOT get @prepend_hardline globally because it appears inline
 ; after ":" in var_declarations (e.g. "Header : Struct").
 ; Newlines before top-level STRUCT are handled by (struct_type (var_declaration))
-; and the type_declaration indent scope.
+; and the struct_type_declaration indent scope.
 ["STRUCT" "struct" "Struct"] @append_hardline
 ["END_STRUCT" "end_struct" "End_struct" "End_Struct"] @prepend_hardline
 
-; In a type_declaration: STRUCT and END_STRUCT are indented under TYPE.
+; In a struct_type_declaration: STRUCT and END_STRUCT are indented under TYPE.
 ; VERSION is NOT indented. Indent opens after the version_pragma line,
 ; or after the block name if there is no VERSION pragma.
-(type_declaration
+(struct_type_declaration
   (version_pragma) @append_indent_start
   ["END_TYPE" "end_type" "End_type" "End_Type"] @prepend_indent_end)
-(type_declaration
+(struct_type_declaration
   name: (identifier)    @append_indent_start
   (version_pragma)      @prepend_indent_end)
-(type_declaration
+(struct_type_declaration
+  name: (db_identifier) @append_indent_start
+  (version_pragma)      @prepend_indent_end)
+
+; In an nvt_type_declaration: member list is indented under TYPE.
+(nvt_type_declaration
+  (version_pragma) @append_indent_start
+  ["END_TYPE" "end_type" "End_type" "End_Type"] @prepend_indent_end)
+(nvt_type_declaration
+  name: (identifier)    @append_indent_start
+  (version_pragma)      @prepend_indent_end)
+(nvt_type_declaration
   name: (db_identifier) @append_indent_start
   (version_pragma)      @prepend_indent_end)
 
