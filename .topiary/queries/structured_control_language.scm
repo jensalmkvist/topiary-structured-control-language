@@ -19,6 +19,9 @@
   (time_of_day_literal)
   (date_time_literal)
   (based_literal)
+  (title_text)
+  (slice)
+  (peripheral_access)
 ] @leaf
 
 ; Comments always followed by a newline
@@ -64,6 +67,11 @@
 (source_file (struct_type_declaration)        @prepend_hardline)
 (source_file (nvt_type_declaration)           @prepend_hardline)
 
+; NAMESPACE wrapper
+["NAMESPACE" "namespace" "Namespace"] @prepend_hardline @append_space
+["END_NAMESPACE" "end_namespace" "End_namespace" "End_Namespace"] @prepend_hardline @append_hardline
+(namespace_name "." @prepend_antispace @append_antispace)
+
 ; TYPE / END_TYPE keywords — own line, space after TYPE before name
 ["TYPE" "type" "Type"] @prepend_hardline @append_space
 ["END_TYPE" "end_type" "End_type" "End_Type"] @prepend_hardline @append_hardline
@@ -89,16 +97,15 @@
   name: (db_identifier) @append_indent_start
   (version_pragma)      @prepend_indent_end)
 
-; In an nvt_type_declaration: member list is indented under TYPE.
+; In an nvt_type_declaration: each named value type is indented under TYPE.
 (nvt_type_declaration
-  (version_pragma) @append_indent_start
+  ["TYPE" "type" "Type"] @append_indent_start
   ["END_TYPE" "end_type" "End_type" "End_Type"] @prepend_indent_end)
-(nvt_type_declaration
-  name: (identifier)    @append_indent_start
-  (version_pragma)      @prepend_indent_end)
-(nvt_type_declaration
-  name: (db_identifier) @append_indent_start
-  (version_pragma)      @prepend_indent_end)
+(nvt_type_declaration (nvt_type) @prepend_hardline)
+(nvt_type ":" @prepend_space @append_space)
+(nvt_type "(" @prepend_space)
+(nvt_type "," @append_space)
+(nvt_member ":=" @prepend_space @append_space)
 
 ; var_declaration inside struct_type — each on its own line
 (struct_type (var_declaration) @prepend_hardline)
@@ -213,8 +220,21 @@
 (version_pragma ":" @prepend_space @append_space)
 (version_pragma (float_literal) @append_hardline)
 
-; Block-level RETAIN / NON_RETAIN — own line
+; Block-level RETAIN / NON_RETAIN / UNLINKED / READ_ONLY — own line
 (block_attr) @prepend_hardline @append_hardline
+
+; TITLE = … and AUTHOR / FAMILY / NAME : … — own line each
+(title_pragma) @prepend_hardline @append_hardline
+(title_pragma "=" @prepend_space @append_space)
+(header_property) @prepend_hardline @append_hardline
+(header_property ":" @prepend_space @append_space)
+
+; FUNCTION "name" : ReturnType
+(function_declaration ":" @prepend_space @append_space)
+
+; Instance DB type line and a non-optimized DB's STRUCT — own line
+(data_block_declaration (db_instance_type) @prepend_hardline @append_hardline)
+(data_block_declaration (struct_type) @prepend_hardline)
 
 ; BEGIN section — own line
 ["BEGIN" "begin" "Begin"] @prepend_hardline @append_hardline
@@ -257,8 +277,10 @@
 ; THEN — space before, body on next line
 ["THEN" "then" "Then"] @prepend_space @append_hardline
 
-; ELSE — own line, body on next line
-["ELSE" "else" "Else"] @prepend_hardline @append_hardline
+; ELSE — own line, body on next line (`ELSE :` keeps its colon on the line)
+["ELSE" "else" "Else"] @prepend_hardline
+(else_clause ":" @prepend_space)
+(else_clause (statement_list) @prepend_hardline)
 
 ; END_IF — own line
 ["END_IF" "end_if" "End_if" "End_If"] @prepend_hardline
@@ -296,7 +318,8 @@
 ["CONTINUE" "continue" "Continue"] @prepend_hardline @append_antispace
 
 ; REGION
-["REGION" "region" "Region"] @prepend_hardline @append_space
+; (region_name starts with the blank after REGION, so no space is added here)
+["REGION" "region" "Region"] @prepend_hardline
 ["END_REGION" "end_region" "End_region" "End_Region"] @prepend_hardline
 
 (region (region_name) @append_hardline)
@@ -371,6 +394,7 @@
 ; Indent ends at the close of the case_element node (before the next selector).
 (case_element (case_selector_list) @prepend_hardline)
 (case_element ":" @append_indent_start @append_hardline)
+(case_selector_list "," @append_space)
 (case_element) @append_indent_end
 
 ; STRUCT indentation
@@ -393,12 +417,18 @@
 
 (var_declaration ":" @prepend_space @append_space)
 (var_declaration ":=" @prepend_space @append_space)
+(var_declaration ["AT" "at" "At"] @prepend_space @append_space)
+(var_declaration (attribute_pragma) @prepend_space)
+(structure_value "," @append_space)
+(array_value "," @append_space)
 
 (assignment_statement ":=" @prepend_space @append_space)
 (for_statement        ":=" @prepend_space @append_space)
 (argument             ":=" @prepend_space @append_space)
 (argument             "=>" @prepend_space @append_space)
-(attribute_pragma     ":=" @prepend_space @append_space)
+(assignment_expression [":=" "+=" "-=" "*=" "/=" "?="] @prepend_space @append_space)
+(assignment_statement ["+=" "-=" "*=" "/=" "?="] @prepend_space @append_space)
+(attribute            ":=" @prepend_space @append_space)
 
 ";" @prepend_antispace
 
@@ -452,5 +482,13 @@
 ; Attribute pragma spacing
 ; -----------------------------------------------------------------------------
 
-(attribute_pragma "{" @prepend_hardline @append_space)
+; Block attribute line `{ a := 'x' ; b := 'y' }` on its own line; a member's
+; attribute list stays inline (`x {a := 'q'} : Int;`).
+(attribute_pragma "{" @append_space)
 (attribute_pragma "}" @prepend_space)
+(attribute_pragma ";" @append_space)
+(function_block_declaration     (attribute_pragma) @prepend_hardline @append_hardline)
+(function_declaration           (attribute_pragma) @prepend_hardline @append_hardline)
+(organization_block_declaration (attribute_pragma) @prepend_hardline @append_hardline)
+(data_block_declaration         (attribute_pragma) @prepend_hardline @append_hardline)
+(struct_type_declaration        (attribute_pragma) @prepend_hardline @append_hardline)
